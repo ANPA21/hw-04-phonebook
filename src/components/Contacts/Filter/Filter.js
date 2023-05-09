@@ -1,18 +1,19 @@
 import PropTypes from 'prop-types';
 import { Wrapper } from './Filter.styled';
 
-export const Filter = ({ filterByName }) => {
+export const Filter = ({ addFilterQuery, filter }) => {
   const onInputChange = event => {
-    filterByName(event.target.value);
+    addFilterQuery(event.target.value);
   };
   return (
     <Wrapper>
       Filter contacts by name
-      <input type="text" onChange={onInputChange}></input>
+      <input type="text" value={filter} onChange={onInputChange} />
     </Wrapper>
   );
 };
 
 Filter.propTypes = {
-  filterByName: PropTypes.func.isRequired,
+  addFilterQuery: PropTypes.func.isRequired,
+  filter: PropTypes.string.isRequired,
 };

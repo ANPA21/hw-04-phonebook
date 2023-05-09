@@ -3,10 +3,15 @@ import PropTypes from 'prop-types';
 import { Contact } from '../Contact/Contact';
 import { List } from './ContactList.styled';
 
-export const ContactsList = ({ contacts, filter, RemoveContactById }) => {
+export const ContactsList = ({
+  contacts,
+  filteredContacts,
+  RemoveContactById,
+  filter,
+}) => {
   return (
     <List>
-      {filter.length === 0
+      {filteredContacts.length === 0 && filter === ''
         ? contacts.map(contact => (
             <Contact
               key={contact.id}
@@ -14,7 +19,7 @@ export const ContactsList = ({ contacts, filter, RemoveContactById }) => {
               RemoveContactById={RemoveContactById}
             />
           ))
-        : filter.map(contact => (
+        : filteredContacts.map(contact => (
             <Contact
               key={contact.id}
               contact={contact}
@@ -31,5 +36,8 @@ ContactsList.propTypes = {
       id: PropTypes.string.isRequired,
     }).isRequired
   ).isRequired,
-  filter: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
+  filteredContacts: PropTypes.arrayOf(PropTypes.shape({}).isRequired)
+    .isRequired,
+  RemoveContactById: PropTypes.func.isRequired,
+  filter: PropTypes.string.isRequired,
 };
