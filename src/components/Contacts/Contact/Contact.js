@@ -3,13 +3,13 @@ import { Button, ContactItem } from './Contact.styled';
 
 export const Contact = ({
   contact: { name, number, id },
-  RemoveContactById,
+  removeContactById,
 }) => {
   return (
     <ContactItem>
       <span>Name: {name}</span>
       <span>Number: {number}</span>
-      <Button type="submit" onClick={() => RemoveContactById(id)}>
+      <Button type="submit" onClick={() => removeContactById(id)}>
         Remove contact
       </Button>
     </ContactItem>
@@ -22,4 +22,5 @@ Contact.propTypes = {
     number: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
   }).isRequired,
+  removeContactById: PropTypes.func.isRequired,
 };

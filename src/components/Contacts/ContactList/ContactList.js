@@ -3,29 +3,16 @@ import PropTypes from 'prop-types';
 import { Contact } from '../Contact/Contact';
 import { List } from './ContactList.styled';
 
-export const ContactsList = ({
-  contacts,
-  filteredContacts,
-  RemoveContactById,
-  filter,
-}) => {
+export const ContactsList = ({ contacts, removeContactById }) => {
   return (
     <List>
-      {filteredContacts.length === 0 && filter === ''
-        ? contacts.map(contact => (
-            <Contact
-              key={contact.id}
-              contact={contact}
-              RemoveContactById={RemoveContactById}
-            />
-          ))
-        : filteredContacts.map(contact => (
-            <Contact
-              key={contact.id}
-              contact={contact}
-              RemoveContactById={RemoveContactById}
-            />
-          ))}
+      {contacts.map(contact => (
+        <Contact
+          key={contact.id}
+          contact={contact}
+          removeContactById={removeContactById}
+        />
+      ))}
     </List>
   );
 };
@@ -36,8 +23,5 @@ ContactsList.propTypes = {
       id: PropTypes.string.isRequired,
     }).isRequired
   ).isRequired,
-  filteredContacts: PropTypes.arrayOf(PropTypes.shape({}).isRequired)
-    .isRequired,
-  RemoveContactById: PropTypes.func.isRequired,
-  filter: PropTypes.string.isRequired,
+  removeContactById: PropTypes.func.isRequired,
 };

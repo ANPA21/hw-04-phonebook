@@ -2,6 +2,7 @@ import { ContactsList } from './ContactList/ContactList';
 import { Title, Wrapper } from './Contacts.styled';
 import { Filter } from './Filter/Filter';
 import { ContactForm } from './Form/Form';
+import { Notification } from './Notification/Notification';
 
 const { Component } = require('react');
 
@@ -45,6 +46,8 @@ class Contacts extends Component {
           contacts: prevState.contacts.filter(contact => contact.id !== id),
         };
       },
+      // Очищает фильтр, чтобы зарендерить список оставшихся контактов, если все отфильтрованные контакты были удалены
+      // Можно убрать, тогда при удалении всех отфильтрованныx контактов будет показан <Notification/>
       () => {
         if (
           this.getFilteredContacts().length === 0 &&
@@ -56,6 +59,15 @@ class Contacts extends Component {
     );
   };
   render() {
+    const contacts =
+      this.state.filter === ''
+        ? this.state.contacts
+        : this.getFilteredContacts();
+
+    let noResultsNotification = null;
+    if (this.state.filter !== '' && this.getFilteredContacts().length === 0) {
+      noResultsNotification = <Notification />;
+    }
     return (
       <Wrapper>
         <Title>Phonebook</Title>
@@ -69,11 +81,11 @@ class Contacts extends Component {
           filter={this.state.filter}
         />
         <ContactsList
-          contacts={this.state.contacts}
-          filteredContacts={this.getFilteredContacts()}
-          RemoveContactById={this.removeContactById}
-          filter={this.state.filter}
+          contacts={contacts}
+          // filteredContacts={this.getFilteredContacts()}
+          removeContactById={this.removeContactById}
         />
+        {noResultsNotification}
       </Wrapper>
     );
   }
