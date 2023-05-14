@@ -5,7 +5,6 @@ import { ContactForm } from './Form/Form';
 import { Notification } from './Notification/Notification';
 
 const { Component } = require('react');
-// 123
 class Contacts extends Component {
   state = {
     contacts: [
@@ -16,6 +15,9 @@ class Contacts extends Component {
     ],
     filter: '',
   };
+
+  componentDidMount() {}
+  componentDidUpdate() {}
 
   addContact = newContact => {
     this.setState(prevState => ({
@@ -82,7 +84,6 @@ class Contacts extends Component {
         />
         <ContactsList
           contacts={contacts}
-          // filteredContacts={this.getFilteredContacts()}
           removeContactById={this.removeContactById}
         />
         {noResultsNotification}
