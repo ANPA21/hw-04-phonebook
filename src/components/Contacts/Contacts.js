@@ -5,6 +5,7 @@ import { ContactForm } from './Form/Form';
 import { Notification } from './Notification/Notification';
 
 const { Component } = require('react');
+const LS_KEY = 'contacts';
 class Contacts extends Component {
   state = {
     contacts: [
@@ -17,14 +18,14 @@ class Contacts extends Component {
   };
 
   componentDidMount() {
-    const existingContacts = localStorage.getItem('contacts');
+    const existingContacts = localStorage.getItem(LS_KEY);
     if (existingContacts !== null) {
       this.setState({ contacts: JSON.parse(existingContacts) });
     }
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+      localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts));
     }
   }
 
