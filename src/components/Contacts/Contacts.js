@@ -3,105 +3,69 @@ import { Title, Wrapper } from './Contacts.styled';
 import { Filter } from './Filter/Filter';
 import { ContactForm } from './Form/Form';
 import { Notification } from './Notification/Notification';
+import { getInitContacts } from './getInitContactsFn';
 
-const { Component } = require('react');
+const { useState, useEffect } = require('react');
 const LS_KEY = 'contacts';
 
-//refactor here
-class Contacts extends Component {
-  state = {
-    contacts: [
-      // { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      // { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      // { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      // { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
-  };
+export const Contacts = () => {
+  const [contacts, setContacts] = useState(getInitContacts);
+  const [filter, setFilter] = useState('');
 
-  componentDidMount() {
+  useEffect(() => {
     const existingContacts = localStorage.getItem(LS_KEY);
     if (existingContacts !== null) {
-      this.setState({ contacts: JSON.parse(existingContacts) });
+      setContacts(JSON.parse(existingContacts));
     }
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts));
-    }
-  }
+  }, []);
 
-  addContact = newContact => {
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
-    }));
+  useEffect(() => {
+    localStorage.setItem(LS_KEY, JSON.stringify(contacts));
+  }, [contacts]);
+
+  const addContact = newContact => {
+    setContacts(prevContacts => [...prevContacts, newContact]);
   };
 
-  addFilterQuery = filterQuery => {
-    this.setState({ filter: filterQuery });
+  const addFilterQuery = filterQuery => {
+    setFilter(filterQuery);
   };
-
-  getFilteredContacts = () => {
-    return this.state.contacts.filter(contact =>
-      contact.name.toLowerCase().includes(this.state.filter.toLowerCase())
+  const getFilteredContacts = () => {
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
-
-  checkExistingContact = name => {
-    return this.state.contacts.find(
+  const checkExistingContact = name => {
+    return contacts.find(
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
   };
-
-  removeContactById = id => {
-    this.setState(
-      prevState => {
-        return {
-          contacts: prevState.contacts.filter(contact => contact.id !== id),
-        };
-      },
-      // Очищает фильтр, чтобы зарендерить список оставшихся контактов, если все отфильтрованные контакты были удалены
-      // Можно убрать, тогда при удалении всех отфильтрованныx контактов будет показан <Notification/>
-      () => {
-        if (
-          this.getFilteredContacts().length === 0 &&
-          this.state.filter !== ''
-        ) {
-          this.setState({ filter: '' });
-        }
-      }
+  const removeContactById = id => {
+    setContacts(prevContacts =>
+      prevContacts.filter(contact => contact.id !== id)
     );
   };
-  render() {
-    const contacts =
-      this.state.filter === ''
-        ? this.state.contacts
-        : this.getFilteredContacts();
-
-    let noResultsNotification = null;
-    if (this.state.filter !== '' && this.getFilteredContacts().length === 0) {
-      noResultsNotification = <Notification />;
-    }
-    return (
-      <Wrapper>
-        <Title>Phonebook</Title>
-        <ContactForm
-          onAdd={this.addContact}
-          checkExistingContact={this.checkExistingContact}
-        />
-        <Title>Contacts</Title>
-        <Filter
-          addFilterQuery={this.addFilterQuery}
-          filter={this.state.filter}
-        />
-        <ContactsList
-          contacts={contacts}
-          removeContactById={this.removeContactById}
-        />
-        {noResultsNotification}
-      </Wrapper>
-    );
+  const contactsToRender = filter === '' ? contacts : getFilteredContacts();
+  let noResultsNotification = null;
+  if (filter !== '' && getFilteredContacts().length === 0) {
+    noResultsNotification = <Notification />;
   }
-}
+  return (
+    <Wrapper>
+      <Title>Phonebook</Title>
+      <ContactForm
+        onAdd={addContact}
+        checkExistingContact={checkExistingContact}
+      />
+      <Title>Contacts</Title>
+      <Filter addFilterQuery={addFilterQuery} filter={filter} />
+      <ContactsList
+        contacts={contactsToRender}
+        removeContactById={removeContactById}
+      />
+      {noResultsNotification}
+    </Wrapper>
+  );
+};
 
 export default Contacts;
