@@ -6,6 +6,8 @@ import { Notification } from './Notification/Notification';
 
 const { Component } = require('react');
 const LS_KEY = 'contacts';
+
+//refactor here
 class Contacts extends Component {
   state = {
     contacts: [
