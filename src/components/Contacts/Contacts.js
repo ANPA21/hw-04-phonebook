@@ -1,29 +1,25 @@
-import { ContactsList } from './ContactList/ContactList';
+import { ContactsList } from '../ContactList/ContactList';
 import { Title, Wrapper } from './Contacts.styled';
-import { Filter } from './Filter/Filter';
-import { ContactForm } from './Form/Form';
-import { Notification } from './Notification/Notification';
-import { getInitContacts } from './getInitContactsFn';
+import { Filter } from '../Filter/Filter';
+import { ContactForm } from '../Form/Form';
+import { Notification } from '../Notification/Notification';
+import { useGetInitContacts } from '../Hooks/useGetInitContacts';
 
 const { useState, useEffect } = require('react');
 const LS_KEY = 'contacts';
 
 export const Contacts = () => {
-  const [contacts, setContacts] = useState(getInitContacts);
+  const [contacts, setContacts] = useGetInitContacts(LS_KEY);
   const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    const existingContacts = localStorage.getItem(LS_KEY);
-    if (existingContacts !== null) {
-      setContacts(JSON.parse(existingContacts));
-    }
-  }, []);
 
   useEffect(() => {
     localStorage.setItem(LS_KEY, JSON.stringify(contacts));
   }, [contacts]);
 
   const addContact = newContact => {
+    if (checkExistingContact(newContact.name)) {
+      alert(`${newContact.name} is already in contacts!`);
+    }
     setContacts(prevContacts => [...prevContacts, newContact]);
   };
 
@@ -45,7 +41,7 @@ export const Contacts = () => {
       prevContacts.filter(contact => contact.id !== id)
     );
   };
-  const contactsToRender = filter === '' ? contacts : getFilteredContacts();
+
   let noResultsNotification = null;
   if (filter !== '' && getFilteredContacts().length === 0) {
     noResultsNotification = <Notification />;
@@ -53,14 +49,11 @@ export const Contacts = () => {
   return (
     <Wrapper>
       <Title>Phonebook</Title>
-      <ContactForm
-        onAdd={addContact}
-        checkExistingContact={checkExistingContact}
-      />
+      <ContactForm onAdd={addContact} />
       <Title>Contacts</Title>
       <Filter addFilterQuery={addFilterQuery} filter={filter} />
       <ContactsList
-        contacts={contactsToRender}
+        contacts={getFilteredContacts()}
         removeContactById={removeContactById}
       />
       {noResultsNotification}

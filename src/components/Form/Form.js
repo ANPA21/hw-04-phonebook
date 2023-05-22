@@ -21,7 +21,7 @@ const SignupSchema = Yup.object().shape({
     .required('Required'),
 });
 
-export const ContactForm = ({ onAdd, checkExistingContact }) => {
+export const ContactForm = ({ onAdd }) => {
   return (
     <Formik
       initialValues={{
@@ -29,13 +29,8 @@ export const ContactForm = ({ onAdd, checkExistingContact }) => {
         number: '',
       }}
       onSubmit={(values, actions) => {
-        if (checkExistingContact(values.name)) {
-          alert(`${values.name} is already in contacts!`);
-          actions.resetForm();
-        } else {
-          onAdd({ id: nanoid(), ...values });
-          actions.resetForm();
-        }
+        onAdd({ id: nanoid(), ...values });
+        actions.resetForm();
       }}
       validationSchema={SignupSchema}
     >
@@ -58,5 +53,4 @@ export const ContactForm = ({ onAdd, checkExistingContact }) => {
 
 ContactForm.propTypes = {
   onAdd: PropTypes.func.isRequired,
-  checkExistingContact: PropTypes.func.isRequired,
 };
